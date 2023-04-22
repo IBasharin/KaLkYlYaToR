@@ -1,5 +1,25 @@
 from  PyQt5.QtCore import Qt 
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QGridLayout, QSizePolicy
+from PyQt5.QtWidgets import QSizePolicy, QApplication, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QGridLayout, QSizePolicy
+from PyQt5.QtGui import QFont
+
+my_font = QFont('Segoe UI', 18)
+
+class Strechbutton(QPushButton):
+    def __init__(self, text):
+        super().__init__(text)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setMinimumSize(40, 40)
+        self.setFont(my_font)
+        self.setStyleSheet('QPushButton {background-color: #2a362d; color: #d0d6d1; border: none; border-radius: 15px; padding: 10px;}')
+
+class Display(QLineEdit):
+    def __init__(self):
+        super().__init__()
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setMinimumSize(40, 40)
+        self.setFont(my_font)
+        self.setStyleSheet('QLineEdit {background-color: #2a362d; color: c0c0c0; border: 2px solid #c0c0c0; border-radius: 15px; padding: 10px;}')
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -7,31 +27,32 @@ class MainWindow(QWidget):
         self.setWindowTitle('Калькулятор')
         self.to_solve = ''
         
-        self.display = QLineEdit()
-        self.display.setReadOnly(True)
-        
+        self.setStyleSheet('QWidget { background-color: #8a0303}')
+
+        self.display = Display()
+
         layout = QGridLayout()
         self.setLayout(layout)
 
-        btn_0 = QPushButton('0')
-        btn_1 = QPushButton('1')
-        btn_2 = QPushButton('2')
-        btn_3 = QPushButton('3')
-        btn_4 = QPushButton('4')
-        btn_5 = QPushButton('5')
-        btn_6 = QPushButton('6')
-        btn_7 = QPushButton('7')
-        btn_8 = QPushButton('8')
-        btn_9 = QPushButton('9')
+        btn_0 = Strechbutton('0')
+        btn_1 = Strechbutton('1')
+        btn_2 = Strechbutton('2')
+        btn_3 = Strechbutton('3')
+        btn_4 = Strechbutton('4')
+        btn_5 = Strechbutton('5')
+        btn_6 = Strechbutton('6')
+        btn_7 = Strechbutton('7')
+        btn_8 = Strechbutton('8')
+        btn_9 = Strechbutton('9')
         
-        btn_back = QPushButton('<-')
-        btn_clear = QPushButton('C')
-        btn_result = QPushButton('=')
-        btn_add = QPushButton('+')
-        btn_substrakt = QPushButton('-')
-        btn_myltiory = QPushButton('*')
-        btn_divide = QPushButton('/')
-        btn_point = QPushButton('.')
+        btn_back = Strechbutton('<-')
+        btn_clear = Strechbutton('C')
+        btn_result = Strechbutton('=')
+        btn_add = Strechbutton('+')
+        btn_substrakt = Strechbutton('-')
+        btn_myltiory = Strechbutton('*')
+        btn_divide = Strechbutton('/')
+        btn_point = Strechbutton('.')
 
         layout.addWidget(self.display, 0, 0, 1, 4)
         layout.addWidget(btn_back, 1, 0)
@@ -79,6 +100,8 @@ class MainWindow(QWidget):
         
 
     def btn_handler(self):
+        if self.to_solve == 'Упс! в поле ввода ничего не написано':
+            self.to_solve = ''
         btn = self.sender()
         if btn.text() in '0123456789.+-*/':
             self.to_solve += btn.text()
@@ -87,7 +110,10 @@ class MainWindow(QWidget):
         if btn.text() == 'C':
             self.to_solve = ''
         if btn.text() == '=':
-            self.to_solve = str(eval(self.to_solve))
+            try:
+                self.to_solve = str(eval(self.to_solve))
+            except:
+                self.to_solve = 'Упс! в поле ввода ничего не написано'
         self.display.setText(self.to_solve)
 
 app = QApplication([])
